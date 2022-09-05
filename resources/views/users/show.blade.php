@@ -9,8 +9,14 @@
 <ul>
     <li>Nome: {{$user->name}}</li>
     <li>Email: {{$user->email}}</li>
-
 </ul>
+
+<form action="{{route('users.delete', $user->id)}}" method="post">
+    @csrf
+    @method('delete')
+    <button type="submit">Excluir</button>                    
+</form>
+
 
 @endsection
 

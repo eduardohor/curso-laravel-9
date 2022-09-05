@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateFormRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -29,7 +29,7 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUpdateFormRequest $request)
     {
         $data = $request->all();
         $data['password'] = bcrypt($request->password);
@@ -47,11 +47,29 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(StoreUpdateFormRequest $request, $id)
     {
         if (!$user = User::find($id))
             return redirect()->route('users.index');
 
-        dd($request->all());
+        $data = $request->only('name', 'email');
+
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.index');
+    }
+
+    public function destroy($id)
+    {
+        if (!$user = User::find($id))
+            return redirect()->route('users.index');
+
+        $user->delete();
+
+        return redirect()->route('users.index');
     }
 }
